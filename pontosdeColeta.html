@@ -1,0 +1,416 @@
+<html>
+<head>
+    <base href="/" />
+    <title>EcoColeta - Mapa de Pontos de Coleta</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        :root {
+            --primary-color: #2ecc71;
+            --secondary-color: #27ae60;
+            --text-color: #2c3e50;
+            --light-bg: #f9f9f9;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        header {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 1rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: var(--text-color);
+        }
+
+        .logo svg {
+            width: 40px;
+            height: 40px;
+        }
+
+        nav ul {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: var(--primary-color);
+        }
+
+        .map-container {
+            position: relative;
+            height: calc(100vh - 80px);
+            margin-top: 80px;
+        }
+
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+
+        .search-control {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .filter-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 20px;
+            background: #f0f0f0;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .legend {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+            z-index: 1001;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 5px 0;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <a href="index.html" class="logo">
+                <svg viewBox="0 0 24 24" fill="var(--primary-color)">
+                    <path d="M12,21L15.6,16.2C14.6,15.45 13.35,15 12,15C10.65,15 9.4,15.45 8.4,16.2L12,21M12,3C7.95,3 4.21,4.34 1.2,6.6L3,9C5.5,7.12 8.62,6 12,6C15.38,6 18.5,7.12 21,9L22.8,6.6C19.79,4.34 16.05,3 12,3M12,9C9.3,9 6.81,9.89 4.8,11.4L6.6,13.8C8.1,12.67 9.97,12 12,12C14.03,12 15.9,12.67 17.4,13.8L19.2,11.4C17.19,9.89 14.7,9 12,9Z"/>
+                </svg>
+                <span>EcoColeta</span>
+            </a>
+
+            <nav>
+                <ul>
+                    <li><a href="pontosdeColeta.html">Mapa de Pontos de Coleta</a></li>
+                    <li><a href="boasPraticas.html">Boas Práticas</a></li>
+                    <li><a href="diretrizes.html">Diretrizes de Descarte</a></li>
+                    <li><a href="faq.html">FAQ</a></li>
+                    <li><a href="contato.html">Contato</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="map-container">
+        <div id="map"></div>
+
+        <div class="search-control">
+            <input type="text" class="search-input" placeholder="Buscar endereço...">
+            <div class="filters">
+                <button class="filter-btn active" data-type="all">Todos</button>
+                <button class="filter-btn" data-type="recycling">Recicláveis</button>
+                <button class="filter-btn" data-type="organic">Orgânicos</button>
+                <button class="filter-btn" data-type="electronic">Eletrônicos</button>
+            </div>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: #2ecc71;"></div>
+                <span>Recicláveis</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #e67e22;"></div>
+                <span>Orgânicos</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #3498db;"></div>
+                <span>Eletrônicos</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #f39c12;"></div>
+                <span>Minha Localização</span>
+            </div>
+        </div>
+    </div>
+
+<script>
+const map = L.map('map').setView([-25.3158, -50.2823], 6); // Centralizando o mapa no Paraná
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors'
+}).addTo(map);
+
+const pontosColeta = [
+    // Pontos de Coleta no Paraná
+    {
+        lat: -25.4284,
+        lng: -49.2733,
+        nome: "Ecoponto Vila CANOAS",
+        tipo: "recycling",
+        horario: "Seg-Sáb: 8h-18h",
+        residuos: ["Papel", "Plástico", "Vidro", "Metal"],
+        instrucoes: "Material deve estar limpo e seco"
+    },
+    {
+        lat: -25.4369,
+        lng: -49.2468,
+        nome: "Ecoponto Alto da XV",
+        tipo: "organic",
+        horario: "Seg-Sex: 7h-16h",
+        residuos: ["Restos de alimentos", "Podas de jardim"],
+        instrucoes: "Não aceita alimentos cozidos"
+    },
+    {
+        lat: -25.4453,
+        lng: -49.1892,
+        nome: "Green Tech",
+        tipo: "electronic",
+        horario: "Ter-Sáb: 9h-17h",
+        residuos: ["Computadores", "Celulares", "Eletrodomésticos"],
+        instrucoes: "Equipamentos devem estar completos"
+    },
+    {
+        lat: -23.3039,
+        lng: -51.1650,
+        nome: "Ecoponto Londrina",
+        tipo: "recycling",
+        horario: "Seg-Sáb: 9h-16h",
+        residuos: ["Papel", "Plástico"],
+        instrucoes: "Traga seu material reciclável"
+    },
+    {
+        lat: -23.4208,
+        lng: -51.9332,
+        nome: "Composta Maringá",
+        tipo: "organic",
+        horario: "Seg-Dom: 8h-18h",
+        residuos: ["Compostáveis"],
+        instrucoes: "Cuidado com materiais não aceitos"
+    },
+    {
+        lat: -25.0960,
+        lng: -50.1595,
+        nome: "Eletrônicos Ponta Grossa",
+        tipo: "electronic",
+        horario: "Seg-Sex: 10h-18h",
+        residuos: ["Televisores", "Computadores"],
+        instrucoes: "Equipamentos devem estar intactos."
+    },
+    {
+        lat: -24.0665,
+        lng: -51.1320,
+        nome: "Ecoponto Cascavel",
+        tipo: "recycling",
+        horario: "Seg-Sáb: 8h-18h",
+        residuos: ["Plástico", "Metal"],
+        instrucoes: "Aceita embalagens limpas."
+    },
+    {
+        lat: -25.3554,
+        lng: -52.0462,
+        nome: "Ecoponto Foz do Iguaçu",
+        tipo: "organic",
+        horario: "Seg-Dom: 8h-18h",
+        residuos: ["Compostáveis"],
+        instrucoes: "Apenas restos de alimentos."
+    },
+    {
+        lat: -23.6427,
+        lng: -51.4815,
+        nome: "Recycling Hub União da Vitória",
+        tipo: "electronic",
+        horario: "Seg-Sex: 10h-18h",
+        residuos: ["Celulares", "Computadores"],
+        instrucoes: "Aceita equipamentos em qualquer estado."
+    }
+];
+
+// Adicionando os marcadores ao mapa
+const icons = {
+    recycling: L.divIcon({
+        html: `<svg viewBox="0 0 24 24" width="30" height="30"><circle cx="12" cy="12" r="10" fill="#2ecc71"/></svg>`,
+        className: 'marker-icon'
+    }),
+    organic: L.divIcon({
+        html: `<svg viewBox="0 0 24 24" width="30" height="30"><circle cx="12" cy="12" r="10" fill="#e67e22"/></svg>`,
+        className: 'marker-icon'
+    }),
+    electronic: L.divIcon({
+        html: `<svg viewBox="0 0 24 24" width="30" height="30"><circle cx="12" cy="12" r="10" fill="#3498db"/></svg>`,
+        className: 'marker-icon'
+    })
+};
+
+const markers = {};
+pontosColeta.forEach(ponto => {
+    const marker = L.marker([ponto.lat, ponto.lng], {icon: icons[ponto.tipo]})
+        .bindPopup(`
+            <h3>${ponto.nome}</h3>
+            <p><strong>Horário:</strong> ${ponto.horario}</p>
+            <p><strong>Resíduos aceitos:</strong></p>
+            <ul>
+                ${ponto.residuos.map(r => `<li>${r}</li>`).join('')}
+            </ul>
+            <p><strong>Instruções:</strong> ${ponto.instrucoes}</p>
+        `);
+    
+    if (!markers[ponto.tipo]) {
+        markers[ponto.tipo] = [];
+    }
+    markers[ponto.tipo].push(marker);
+    marker.addTo(map);
+});
+
+// Função para localizar o usuário
+function locateUser() {
+    map.locate({setView: true, maxZoom: 16});
+}
+
+// Evento que acontece quando a localização é obtida
+map.on('locationfound', function(e) {
+    const radius = e.accuracy / 2;
+    L.marker(e.latlng)
+        .addTo(map)
+        .bindPopup("Você está aqui!")
+        .openPopup();
+    L.circle(e.latlng, radius).addTo(map);
+});
+
+// Evento que lida com erros de localização
+map.on('locationerror', function(e) {
+    alert(e.message);
+});
+
+document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        const type = btn.dataset.type;
+        
+        Object.entries(markers).forEach(([markerType, markerList]) => {
+            markerList.forEach(marker => {
+                if (type === 'all' || type === markerType) {
+                    marker.addTo(map);
+                } else {
+                    marker.remove();
+                }
+            });
+        });
+    });
+});
+
+// Adicionando um controle para localizar usuário
+const locationControl = L.control({position: 'topleft'});
+locationControl.onAdd = function(map) {
+    const div = L.DomUtil.create('div', 'leaflet-bar leaflet-control');
+    div.innerHTML = `
+        <a href="#" title="Mostrar minha localização" 
+           style="width: 30px; height: 30px; line-height: 30px; display: block; text-align: center; 
+                  text-decoration: none; color: black;">
+            <svg viewBox="0 0 24 24" width="18" height="18" style="margin-top: 6px;">
+                <path fill="currentColor" d="M12,8A4,4 0 0,1 16,12A4,4 0 0,1 12,16A4,4 0 0,1 8,12A4,4 0 0,1 12,8M3.05,13H1V11H3.05C3.5,6.83 6.83,3.5 11,3.05V1H13V3.05C17.17,3.5 20.5,6.83 20.95,11H23V13H20.95C20.5,17.17 17.17,20.5 13,20.95V23H11V20.95C6.83,20.5 3.5,17.17 3.05,13M12,5A7,7 0 0,0 5,12A7,7 0 0,0 12,19A7,7 0 0,0 19,12A7,7 0 0,0 12,5Z"/>
+            </svg>
+        </a>`;
+    
+    div.onclick = function() {
+        locateUser();
+        return false;
+    };
+    
+    return div;
+};
+locationControl.addTo(map);
+
+const searchInput = document.querySelector('.search-input');
+searchInput.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        const address = this.value;
+        fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.length > 0) {
+                    const {lat, lon} = data[0];
+                    map.setView([lat, lon], 16);
+                }
+            });
+    }
+});
+</script>
+
+</body>
+</html>

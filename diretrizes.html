@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <base href="/" />
+    <title>EcoColeta - Diretrizes de Descarte</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root {
+            --primary-color: #2ecc71;
+            --secondary-color: #27ae60;
+            --text-color: #2c3e50;
+            --light-bg: #f9f9f9;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        header {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 1rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: var(--text-color);
+        }
+
+        .logo svg {
+            width: 40px;
+            height: 40px;
+        }
+
+        nav ul {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: var(--primary-color);
+        }
+
+        .guidelines-container {
+            max-width: 1200px;
+            margin: 100px auto 50px;
+            padding: 0 20px;
+        }
+
+        h1 {
+            margin-bottom: 30px;
+        }
+
+        .category-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .category-icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        .guidelines-list {
+            list-style: none;
+            margin: 20px 0;
+        }
+
+        .guidelines-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: start;
+            gap: 10px;
+        }
+
+        .guidelines-list li:last-child {
+            border-bottom: none;
+        }
+
+        .do-dont-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 768px) {
+            .do-dont-section {
+                grid-template-columns: 1fr;
+            }
+            nav ul {
+                gap: 1rem;
+            }
+        }
+
+        .do-section, .dont-section {
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .do-section {
+            background: rgba(46, 204, 113, 0.1);
+        }
+
+        .dont-section {
+            background: rgba(231, 76, 60, 0.1);
+        }
+
+        .faq-section {
+            margin-top: 30px;
+        }
+
+        .faq-answer {
+            margin-top: 10px;
+            color: #555;
+        }
+
+        .faq-item {
+            border-bottom: 1px solid #eee;
+            padding: 15px 0;
+        }
+
+        .faq-question {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .collection-points {
+            background: var(--light-bg);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+
+        .map-link {
+            display: inline-block;
+            background: var(--primary-color);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+        }
+
+        .map-link:hover {
+            background: var(--secondary-color);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <a href="index.html" class="logo">
+                <svg viewBox="0 0 24 24" fill="var(--primary-color)">
+                    <path d="M12,21L15.6,16.2C14.6,15.45 13.35,15 12,15C10.65,15 9.4,15.45 8.4,16.2L12,21M12,3C7.95,3 4.21,4.34 1.2,6.6L3,9C5.5,7.12 8.62,6 12,6C15.38,6 18.5,7.12 21,9L22.8,6.6C19.79,4.34 16.05,3 12,3M12,9C9.3,9 6.81,9.89 4.8,11.4L6.6,13.8C8.1,12.67 9.97,12 12,12C14.03,12 15.9,12.67 17.4,13.8L19.2,11.4C17.19,9.89 14.7,9 12,9Z"/>
+                </svg>
+                <span>EcoColeta</span>
+            </a>
+            
+            <nav>
+                <ul>
+                    <li><a href="pontosdeColeta.html">Mapa de Pontos de Coleta</a></li>
+                    <li><a href="boasPraticas.html">Boas Práticas</a></li>
+                    <li><a href="diretrizes.html">Diretrizes de Descarte</a></li>
+                    <li><a href="faq.html">FAQ</a></li>
+                    <li><a href="contato.html">Contato</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="guidelines-container">
+        <h1>Diretrizes de Descarte</h1>
+        
+        <section class="category-section">
+            <div class="category-header">
+                <svg class="category-icon" viewBox="0 0 24 24" fill="var(--primary-color)">
+                    <path d="M21,16.5C21,16.88 20.79,17.21 20.47,17.38L12.57,21.82C12.41,21.94 12.21,22 12,22C11.79,22 11.59,21.94 11.43,21.82L3.53,17.38C3.21,17.21 3,16.88 3,16.5V7.5C3,7.12 3.21,6.79 3.53,6.62L11.43,2.18C11.59,2.06 11.79,2 12,2C12.21,2 12.41,2.06 12.57,2.18L20.47,6.62C20.79,6.79 21,7.12 21,7.5V16.5M12,4.15L6.04,7.5L12,10.85L17.96,7.5L12,4.15M5,15.91L11,19.29V12.58L5,9.21V15.91M19,15.91V9.21L13,12.58V19.29L19,15.91Z"/>
+                </svg>
+                <h2>Resíduos Eletrônicos</h2>
+            </div>
+            
+            <p>Equipamentos eletrônicos contêm materiais perigosos e valiosos que precisam ser descartados adequadamente.</p>
+            
+            <div class="do-dont-section">
+                <div class="do-section">
+                    <h3>Como Descartar</h3>
+                    <ul class="guidelines-list">
+                        <li>✓ Procure pontos de coleta especializados</li>
+                        <li>✓ Remova baterias e pilhas antes do descarte</li>
+                        <li>✓ Apague dados pessoais dos dispositivos</li>
+                    </ul>
+                </div>
+                
+                <div class="dont-section">
+                    <h3>O que Evitar</h3>
+                    <ul class="guidelines-list">
+                        <li>✗ Não descarte no lixo comum</li>
+                        <li>✗ Não quebre ou desmonte equipamentos</li>
+                        <li>✗ Não exponha à chuva ou umidade</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="collection-points">
+                <h4>Pontos de Coleta</h4>
+                <p>Encontre o ponto de coleta mais próximo para seus resíduos eletrônicos.</p>
+                <a href="https://ecocoleta.com/mapa?tipo=eletronicos" class="map-link">Ver no Mapa</a>
+            </div>
+
+            <div class="faq-section">
+                <h3>Dúvidas Frequentes</h3>
+                <div class="faq-item">
+                    <div class="faq-question">Posso descartar celulares quebrados no lixo comum?</div>
+                    <div class="faq-answer">Não, celulares e outros dispositivos eletrônicos devem ser descartados em pontos de coleta específicos para garantir a reciclagem adequada dos componentes.</div>
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
